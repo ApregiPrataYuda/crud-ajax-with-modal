@@ -1,0 +1,175 @@
+<div class="m-grid__item m-grid__item--fluid m-wrapper">
+	<div class="m-subheader ">
+		<div class="d-flex align-items-center">
+			<div class="mr-auto">
+				<h3 class="m-subheader__title m-subheader__title--separator"><?php echo $title;?></h3>
+				<ul class="m-subheader__breadcrumbs m-nav m-nav--inline">
+					<li class="m-nav__item m-nav__item--home">
+						<a href="<?php echo base_url();?>" class="m-nav__link m-nav__link--icon">
+							<i class="m-nav__link-icon la la-home"></i>
+						</a>
+					</li>
+					<li class="m-nav__separator">-</li>
+					<li class="m-nav__item">
+						<span class="m-nav__link-text">Master</span>
+					</li>
+					<li class="m-nav__separator">-</li>
+					<li class="m-nav__item">
+						<span class="m-nav__link-text">Store</span>
+					</li>
+					<li class="m-nav__separator">-</li>
+					<li class="m-nav__item ">
+						<a href="<?php echo base_url();?>data-store" class="m-nav__link">
+							<span class="m-nav__link-text">Data Store</span>
+						</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+
+	<div class="m-content">
+		<div class="m-portlet m-portlet--mobile">
+			<div class="m-portlet__head">
+				<div class="m-portlet__head-caption">
+					<div class="m-portlet__head-title">
+						<h3 class="m-portlet__head-text"><?php echo $description;?></h3>
+					</div>
+				</div>
+				<div class="m-portlet__head-tools">
+					<ul class="m-portlet__nav">
+						<li class="m-portlet__nav-item">
+							<?php if($this->session->userdata('insert') == 1) { ?>
+								<a onclick="create_store()" class="btn btn-info" style="color: #fff;">
+									<span>
+										<i class="la la-plus"></i>
+										<span>New Record</span>
+									</span>
+								</a>
+							<?php } ?>
+						</li>
+						<li class="m-portlet__nav-item"></li>
+					</ul>
+				</div>
+			</div>
+			<?php $this->load->view('messages'); ?>
+			<div class="m-portlet__body">
+				<div class="table-responsive">
+					<table class="table table-striped- table-bordered table-hover table-checkable responsive no-wrap" id="tbl_store">
+						<thead>
+							<tr>
+								<th class="text-center" style="width:5%">No</th>
+								<th>Kode</th>
+								<th>Name</th>
+								<th>Type</th>
+								<th>Address</th>
+								<th class="text-center" style="width:10%">Actions</th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="modal_form" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+</div>
+
+<script type="text/javascript">
+var tbl_store;
+$(document).ready(function() {
+    tbl_store = $('#tbl_store').DataTable({ 
+        "processing": true, 
+        "serverSide": true, 
+        "order": [], 
+        "ajax": {
+            "url": "<?php echo site_url('master/store/store_controller/Data/')?>",
+            "type": "POST"
+        },
+        "columnDefs": [
+        { 
+            "targets": [ 0,5 ], 
+            "orderable": false, 
+        }
+        ],
+    });
+});
+
+function  create_store()
+{
+	$.ajax({
+		url : "<?php echo base_url()?>master/store/store_controller/create_modal",
+		success: function(data)
+		{
+			$('#modal_form').html(data);
+			$('#modal_form').modal('show');  
+			$(".modal-backdrop, fade, in").addClass('modal-backdrop');
+		},
+		type: "POST",
+		datatype: "html"
+	});
+	return false;
+}
+
+
+function  edit_store(id)
+{
+	$.ajax({
+		url : "<?php echo base_url()?>master/store/store_controller/edit_modal/"+id,
+		success: function(data)
+		{
+			$('#modal_form').html(data);
+			$('#modal_form').modal('show');  
+			$(".modal-backdrop, fade, in").addClass('modal-backdrop');
+		},
+		type: "POST",
+		datatype: "html"
+	});
+	return false;
+}
+
+
+
+function delete_store(id) {
+	{
+    swal({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, delete it!'
+    	}).then(function(result) {
+        if (result.value) {
+           $.ajax({
+				url: '<?php echo site_url('master/store/store_controller/delete_data'); ?>/'+id,
+                success: function(result)
+	        	{
+	        		if (result == true) {
+	        			swal({
+			                title: 'Deleted!',
+			                text: "Your data has been deleted.",
+			                type: 'success',
+			                showCancelButton: false,
+			                confirmButtonText: 'OK!'
+			            }).then(function(result2) {
+                    		if (result2.value){
+                    			tbl_store.ajax.reload(null);
+                    		}
+                    	});
+	        		} else {
+	        			swal(
+	                        'Not Deleted!',
+	                        'Your file not deleted.',
+	                        'error'
+                    	);
+	        		}
+	        	}
+            });
+        }
+    });
+}
+}
+</script>		
