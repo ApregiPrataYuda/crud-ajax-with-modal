@@ -1,0 +1,219 @@
+<?php if(!defined("BASEPATH"))exit('No direct script access allowed.');
+
+class M_store extends CI_Model
+{
+	function __construct()
+	{
+		parent::__construct();
+	}
+
+	private function _show_all_DT()
+	{
+		$table = "store s";
+		$column_order = array(null, 's.store_name','x.nama_type','s.address','a.name','b.name', 'c.name'); //set column field database for datatable orderable
+		$column_search = array('s.name','s.address'); //set column field database for datatable searchable 
+		$order = array('id_store' => 'desc'); 
+		
+		// $this->db->select('*');
+		$this->db->select('s.*, s.name as store_name,x.name as nama_type,a.name as country,b.name as state,c.name as city');
+		$this->db->from($table);
+		$this->db->join('m_country a', 'a.id = s.country', 'left');
+		$this->db->join('m_country b', 'b.id = s.state', 'left');
+		$this->db->join('m_country c', 'c.id = s.city', 'left');
+		$this->db->join('m_store_type x', 'x.id_m_store_type = s.store_type', 'left');
+		
+		$i = 0;
+	
+		foreach ($column_search as $item) // loop column 
+		{
+			if($_POST['search']['value']) // if datatable send POST for search
+			{
+				
+				if($i===0) // first loop
+				{
+					$this->db->group_start(); // open bracket. query Where with OR clause better with bracket. because maybe can combine with other WHERE with AND.
+					$this->db->like($item, $_POST['search']['value']);
+				}
+				else
+				{
+					$this->db->or_like($item, $_POST['search']['value']);
+				}
+
+				if(count($column_search) - 1 == $i) //last loop
+					$this->db->group_end(); //close bracket
+			}
+			$i++;
+		}
+		
+		if(isset($_POST['order'])) // here order processing
+		{
+			$this->db->order_by($column_order[$_POST['order']['0']['column']], $_POST['order']['0']['dir']);
+		} 
+		else if(isset($order))
+		{
+			$order = $order;
+			$this->db->order_by(key($order), $order[key($order)]);
+		}
+		else 
+		{
+			$order = $order;
+			$this->db->order_by(key($order), $order[key($order)]);
+		}
+	}
+
+	public function show_all_DT()
+	{
+		$this->_show_all_DT();
+		if($_POST['length'] != -1)
+		$this->db->limit($_POST['length'], $_POST['start']);
+		$query = $this->db->get();
+		return $query->result();
+	}
+
+	public function count_filtered_show_all_DT()
+	{
+		$this->_show_all_DT();
+		$query = $this->db->get();
+		return $query->num_rows();
+	}
+
+	public function count_show_all_DT()
+	{
+		$this->db->from('store');
+		return $this->db->count_all_results();
+	}
+
+
+	function delete($id)
+	{
+		$this->db->where('id_store', $id);
+		$this->db->delete('store');
+		return true;
+	}
+
+
+	function get_provinsi()
+	{
+		$this->db->select('*');
+		$this->db->from('m_country');
+		$this->db->where('id_parent', ID6001);
+		$data = $this->db->get();
+		$hasil = $data->result();
+		return $hasil;
+	}
+
+
+	function get_state($id)
+	{
+		$this->db->select('*');
+		$this->db->from('m_country');
+		$this->db->where('id_parent', $id);
+		$data = $this->db->get();
+		$hasil = $data->result();
+		return $hasil;
+	}
+
+
+	function get_city($id)
+	{
+		$this->db->select('*');
+		$this->db->from('m_country');
+		$this->db->where('id_parent',$id);
+		$data = $this->db->get();
+		$hasil = $data->result();
+		return $hasil;
+	}
+
+	function get_country()
+	{
+		$this->db->select('*');
+		$this->db->from('m_country');
+		$this->db->where('id_parent','');
+		$this->db->order_by('name', 'asc');
+		$data = $this->db->get();
+		$hasil = $data->result();
+		return $hasil;
+	}
+
+	function get_parent_country_by_country($id)
+	{
+		$this->db->select('*');
+		$this->db->from('m_country');
+		$this->db->where('id_parent', $id);
+		$this->db->order_by('name', 'asc');
+		$data = $this->db->get();
+		$hasil = $data->result();
+		return $hasil;
+	}
+
+	function data_store($id)
+	{
+		$this->db->select('*');
+		$this->db->from('store');
+		$this->db->where('id_store', $id);
+		$data = $this->db->get();
+		return $data;
+	}
+
+
+
+	function create_store($data)
+	{
+		$this->db->insert('store', $data);
+		$id = $this->db->insert_id();
+		return $id;
+	}
+
+
+	function update_store($id, $data)
+	{
+		$this->db->where('id_store', $id);
+		$this->db->update('store', $data);
+		return true;
+	}
+
+
+	function cek_data_store($value)
+	{
+		$this->db->select('*');
+		$this->db->from('store');
+		$this->db->where('store_code', $value);
+		// if ($name) {
+		// 	$this->db->where('name', $name);
+		// }
+		$data = $this->db->get();
+		return $data;
+	}
+
+	// function cek_data_store($value=null)
+	// {
+	// 	$this->db->select('*');
+	// 	$this->db->from('store');
+	// 	$this->db->where('store_code', $value);
+	// 	$data = $this->db->get();
+	// 	return $data;
+	// }
+
+
+	public function get_storetype()
+	{
+		$this->db->select('*');
+		$this->db->from('m_store_type');
+		$this->db->order_by('name', 'DESC');
+		$data = $this->db->get();
+		$hasil = $data->result();
+		return $hasil;
+	}
+
+
+
+	public function cek_data($code)
+	{
+		$this->db->select('*');
+		$this->db->from('store');
+		$this->db->where('store_code', $code);
+		$this->db->or_where('name', $code);
+		$data = $this->db->get();
+		return $data;
+	}
+
