@@ -1,0 +1,310 @@
+<div class="modal-dialog modal-lg" role="document">
+	<div class="modal-content">
+		<div class="modal-header">
+			<h5 class="modal-title" id="exampleModalLongTitle"><?php echo $title; ?></h5>
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+			</button>
+		</div>
+
+		           
+		<form class="m-form m-form--fit" name="modal_store" id="modal_store" onsubmit="return false">
+			<div class="modal-body">
+				<div class="m-portlet__body">
+					<input type="hidden" name="id_store" value="<?php echo (isset($detail) ? $detail->row('id_store') : ''); ?>">
+					
+					<div class="col-12">
+						<div class="m-alert m-alert--outline alert alert-warning alert-dismissible alert_error_modal" role="alert" style="display: none;">			
+						</div>
+					</div>
+
+					<div class="row">
+
+					<div class="col-6">
+                    
+
+					<div class="form-group m-form__group row">
+						<label for="example-text-input" class="col-lg-4 col-form-label">Code Store</label>
+						<div class="col-lg-8">
+							<input type="text" class="form-control store_code" required placeholder="Store Code" name="store_code" value="<?php echo (isset($detail) ? $detail->row('store_code') : ''); ?>">
+						    <input type="hidden" class="form-control store_code_before"  name="store_code_before" value="<?php echo (isset($detail) ? $detail->row('store_code') : ''); ?>">
+						</div>
+					</div>
+
+					
+
+					<div class="form-group m-form__group row">
+						<label for="example-text-input" class="col-lg-4 col-form-label">Store Name</label>
+						<div class="col-lg-8">
+							<input type="text" class="form-control name_modal" required placeholder="Store Name" name="name_modal" value="<?php echo (isset($detail) ? $detail->row('name') : ''); ?>">
+						</div>
+					</div>
+
+
+					<div class="form-group m-form__group row">
+						<label for="example-text-input" class="col-lg-4 col-md-12 col-sm-12 col-form-label">Store Type</label>
+						<div class="col-lg-8 col-md-12 col-sm-12">
+								<select class="form-control select2 m-select2 store_type" id="store_type" name="store_type" style="width: 100%;" required>
+								<option value="">Choose</option>
+								<?php 
+											foreach($this->m_store->get_storetype() as $row)
+											{
+												echo '<option '.(isset($detail) && $detail->row('store_type')== $row->id_m_store_type ? 'selected="selected"' : '').' value="'.$row->id_m_store_type.'">'.$row->name.'</option>';
+											} 
+										?>
+								</select>
+						</div>
+					</div>
+
+
+					<div class="form-group m-form__group row">
+						<label for="example-text-input" class="col-lg-4 col-form-label">Registered Date</label>
+						<div class="col-lg-8">
+							<input type="text" class="form-control date_pick registered_date"  name="registered_date" required value="<?php echo (isset($detail) ? $detail->row('registered_date') : ''); ?>">
+						</div>
+					</div>
+
+
+					<div class="form-group m-form__group row">
+						<label for="example-text-input" class="col-lg-4 col-form-label">Closed Date</label>
+						<div class="col-lg-8">
+							<input type="text" class="form-control date_pick closed_date" name="closed_date" required value="<?php echo (isset($detail) ? $detail->row('closed_date') : ''); ?>">
+						</div>
+					</div>
+
+
+					<div class="form-group m-form__group row">
+						<label for="example-text-input" class="col-lg-4 col-md-12 col-sm-12 col-form-label">Notes</label>
+						<div class="col-lg-8 col-md-12 col-sm-12">
+							<textarea name="notes_modal" id="notes_modal" required rows="3" class="form-control notes_modal"><?php echo (isset($detail) ? $detail->row('notes') : ''); ?></textarea>
+						</div>
+					</div>
+
+
+					
+
+					<div class="form-group m-form__group row">
+						<label for="example-text-input" class="col-4 col-form-label"><?php echo lang('status');?></label>
+						<div class="col-8">
+							<select name="status_modal" class="form-control select2 status_modal" style="width: 100%;" required>
+								<option value=""><?php echo lang('choose'); ?></option>
+								<option <?php echo (isset($detail) && $detail->row('status') == 'Active' ? 'selected="selected"' : ''); ?> value="Active">Active</option>
+								<option <?php echo (isset($detail) && $detail->row('status') == 'Closed' ? 'selected="selected"' : ''); ?> value="Closed">Closed</option>
+							</select>
+						</div>
+					</div>
+
+					</div>
+
+
+					<div class="col-6">
+					<div class="form-group m-form__group row">
+						<label for="example-text-input" class="col-lg-4 col-md-12 col-sm-12 col-form-label">Country</label>
+						<div class="col-lg-8 col-md-12 col-sm-12">
+								<select class="form-control select2 m-select2 state" id="country" name="country" style="width: 100%;" required>
+								<option value="">Choose</option>
+								<?php 
+							       foreach($this->m_store->get_country() as $row)
+											{
+												echo '<option '.(isset($detail) && $detail->row('country')== $row->id ? 'selected="selected"' : '').' value="'.$row->id.'">'.$row->name.'</option>';
+											} 
+										?>
+								</select>
+								<input type="hidden" name="country_hasil" class="country_hasil">
+						</div>
+					</div>
+
+
+
+					<div class="form-group m-form__group row">
+						<label for="example-text-input" class="col-lg-4 col-md-12 col-sm-12 col-form-label">State</label>
+						<div class="col-lg-8 col-md-12 col-sm-12">
+								<select class="form-control select2 m-select2 state" id="state" name="state" style="width: 100%;" required>
+								<option value="">Choose</option>
+								<?php 
+		                            if(isset($detail) && $detail->row('country') !=''){
+		                                foreach($this->m_store->get_state($detail->row('country')) as $state)
+		                                { 
+		                                 echo '<option '.(isset($detail) && $detail->row('state')== $state->id ? 'selected="selected"' : '').' value="'.$state->id.'">'.$state->name.'</option>';
+		                                }
+		                            }
+		                            ?>
+								</select>
+								<input type="hidden" name="state_hasil" class="state_hasil">
+						</div>
+					</div>
+
+
+
+					<div class="form-group m-form__group row">
+						<label for="example-text-input" class="col-lg-4 col-md-12 col-sm-12 col-form-label">City</label>
+						<div class="col-lg-8 col-md-12 col-sm-12">
+								<select class="form-control select2 m-select2 city" id="city" name="city" style="width: 100%;" required>
+								<option value="">Choose</option>
+								<?php 
+		                            if(isset($detail) && $detail->row('state') !=''){
+		                                foreach($this->m_store->get_city($detail->row('state')) as $kota)
+		                                { 
+		                                 echo '<option '.(isset($detail) && $detail->row('city')== $kota->id ? 'selected="selected"' : '').' value="'.$kota->id.'">'.$kota->name.'</option>';
+		                                }
+		                            }
+		                            ?>
+									</select>
+								    <input type="hidden" name="city_hasil" class="city_hasil">
+						</div>
+					</div>
+
+
+				
+					<div class="form-group m-form__group row">
+						<label for="example-text-input" class="col-lg-4 col-md-12 col-sm-12 col-form-label">Store Address</label>
+						<div class="col-lg-8 col-md-12 col-sm-12">
+							<textarea name="address_modal" id="address_modal" required rows="3" class="form-control address_modal"><?php echo (isset($detail) ? $detail->row('address') : ''); ?></textarea>
+						</div>
+					</div>
+					</div>
+					</div>
+
+				 </div>
+				</div>
+			<!-- </div> -->
+			<div class="modal-footer">
+				<button type="button" onclick="nextToSaveStore()" class="btn btn-primary" id="btn_submit">Submit</button>
+			</div>
+		</form>
+	</div>
+</div>
+
+<script type="text/javascript">
+
+$(document).ready(function(){
+	$('.select2').select2();
+
+	$('.date_pick').datepicker({
+		format: 'yyyy-mm-dd',
+		autoclose :true
+		// container :'.div_date_pick'
+	});
+
+	$('.name_modal').on('keyup', function(e){
+		if(e.which == 13) {
+			$.ajax({
+				url: '<?php echo base_url("master/store/store_controller/cek_data");?>',
+				method: 'POST',
+				data: { name_modal: $(this).val() },
+				success: function(response) {
+					if(response == 'exist') {
+						$('.alert_error_modal').text('Duplicate Name').show(0).delay(3000).hide(0);
+					}
+				}
+			});
+		}
+	});
+	
+});
+
+
+
+
+$('#country').on('change', function() {
+	    if ($(this).val())
+	    {
+	        $.ajax({
+	        	url: '<?php echo site_url('master/store/store_controller/get_state'); ?>/'+$(this).val(),
+	        	success: function(result)
+	        	{
+	        		$('#state').html(result);
+	        	}
+	        });
+	    } else {
+	        $('#state').html('<option value="">Choose</option>');
+	    }
+	});
+
+
+
+	
+$('#state').on('change', function() {
+	    if ($(this).val())
+	    {
+	        $.ajax({
+	        	url: '<?php echo site_url('master/store/store_controller/get_city'); ?>/'+$(this).val(),
+	        	success: function(result)
+	        	{
+	        		$('#city').html(result);
+	        	}
+	        });
+	    } else {
+	        $('#city').html('<option value="">Choose</option>');
+	    }
+	});
+
+
+
+function nextToSaveStore() 
+{
+    $("#modal_store").validate({
+        rules: {
+			required: !0
+        }
+        , invalidHandler:function(e, r) {
+            mUtil.scrollTo("modal_store", -200), swal({
+                title:"", 
+                text:"There are some errors in your submission. Please correct them.", 
+                type:"error", 
+                confirmButtonClass:"btn btn-secondary m-btn m-btn--wide", 
+                onClose:function(e) {
+                    console.log("on close event fired!")
+                }
+            }), e.preventDefault()
+        }
+        , submitHandler:function(e) {
+        }
+    });
+
+	if($("#modal_store").valid()) {
+		swal({
+			title: "Are you sure?",
+			text: "You won't be able to save this!",
+			type: "warning",
+			showCancelButton: !0,
+			confirmButtonText: "Yes, Save it!",
+			cancelButtonText: "No, cancel!",
+			reverseButtons: !0
+		}).then(function(result){
+			if(result.value) {
+				$.ajax({
+					url: '<?php echo site_url('master/store/store_controller/action_store'); ?>',
+					type: 'POST',
+					data: $('#modal_store').serialize(),
+					beforeSend: function() {
+						$('#btn_submit').prop('disabled', true).addClass('m-loader m-loader--light m-loader--right').text('Submitting...');
+					},
+					success: function(result2)
+					{
+						if (result2 != 'ready') {
+							swal({
+							title: 'Success',
+							text: ($('input[name="name_modal"]').val() != '' ? 'Store has been created' : 'Store has been updated'),
+							type: 'success',
+							showCancelButton: false,
+							confirmButtonText: 'OK!'
+							})
+						.then(function(result3) {
+							location.href = '<?php echo base_url();?>data-store';
+						});
+						}else{
+							swal("Confirmation", 'Kode Tidak Bisa Di ubah / Kode Sudah Digunakan', "error");
+							$('#btn_submit').prop('disabled', false).removeClass('m-loader m-loader--light m-loader--right').text('Submit');
+						}
+					},
+					error:function(){
+						swal("Confirmation", ($('input[name="name_modal"]').val() != '' ? 'Data is failed to update' : 'Data is failed to create'), "error");
+						$('#btn_submit').prop('disabled', false).removeClass('m-loader m-loader--light m-loader--right').text('Submit');
+					}
+				});
+			}
+		});
+	}
+}
+</script>
